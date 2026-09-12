@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CloudFileStorage</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">☁</div>
+            <span>CloudFileStorage</span>
+        </div>
+
+
+        <nav>
+
+            <a href="#" class="nav-item active">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>📁</span>
+                My Files
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>↗</span>
+                Shared Files
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>💾</span>
+                Storage
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="user">
+
+                <div class="avatar">
+                    U
+                </div>
+
+                <div>
+                    <strong>User</strong>
+                    <small>Cloud Storage</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div>
+
+                <h1>Cloud File Storage</h1>
+
+                <p>
+                    Upload, store and manage your files easily.
+                </p>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <button class="icon-button">
+                    🔔
+                </button>
+
+                <div class="profile">
+                    U
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- DASHBOARD CARDS -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    📁
+                </div>
+
+                <div>
+
+                    <span>Total Files</span>
+
+                    <h2>{{ files|length }}</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ☁
+                </div>
+
+                <div>
+
+                    <span>Storage Used</span>
+
+                    <h2>
+                        {% set total_size = files|sum(attribute='size') %}
+                        {{ "%.2f"|format(total_size) }} KB
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    ⬆
+                </div>
+
+                <div>
+
+                    <span>Cloud Status</span>
+
+                    <h2 class="online">
+                        ● Online
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- UPLOAD AREA -->
+
+        <section class="upload-card">
+
+            <div class="upload-icon">
+                ☁
+            </div>
+
+            <h2>
+                Upload your files
+            </h2>
+
+            <p>
+                Drag and drop your files here or select files
+                from your computer.
+            </p>
+
+
+            <form action="/upload"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <label for="file-upload"
+                       class="upload-button">
+
+                    📤 Choose File
+
+                </label>
+
+                <input type="file"
+                       id="file-upload"
+                       name="file"
+                       required
+                       hidden>
+
+                <button type="submit"
+                        class="upload-submit">
+
+                    Upload File
+
+                </button>
+
+            </form>
+
+            <small>
+                Supported files • PDF • DOCX • JPG • PNG • ZIP
+            </small>
+
+        </section>
+
+
+        <!-- FILE SECTION -->
+
+        <section class="files-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>My Files</h2>
+
+                    <p>
+                        Manage your uploaded files
+                    </p>
+
+                </div>
+
+
+                <div class="search-box">
+
+                    🔍
+
+                    <input type="text"
+                           placeholder="Search files..."
+                           id="searchInput">
+
+                </div>
+
+            </div>
+
+
+            {% if files %}
+
+            <div class="table-container">
+
+                <table id="fileTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>File Name</th>
+
+                            <th>Size</th>
+
+                            <th>Modified</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for file in files %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="file-info">
+
+                                <div class="file-icon">
+                                    📄
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ file.name }}
+                                    </strong>
+
+                                    <small>
+                                        File
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            {{ file.size }} KB
+                        </td>
+
+
+                        <td>
+                            {{ file.date }}
+                        </td>
+
+
+                        <td>
+
+                            <div class="actions">
+
+                                <a href="/download/{{ file.name }}"
+                                   class="download-button">
+
+                                    ⬇ Download
+
+                                </a>
+
+
+                                <a href="/delete/{{ file.name }}"
+                                   class="delete-button">
+
+                                    🗑 Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty">
+
+                <div>
+                    📂
+                </div>
+
+                <h3>No files yet</h3>
+
+                <p>
+                    Upload your first file to get started.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                CloudFileStorage © 2026
+            </p>
+
+            <p>
+                Cloud Computing Mini Project
+            </p>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
